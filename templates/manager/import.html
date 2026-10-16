@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Import groups – SmartShift{% endblock %}
+{% block content %}
+<h1 class="mb-4">Import the group schedule</h1>
+{% if result %}
+<div class="mb-6 p-4 bg-white border-l-4 border-pine">
+  <p class="font-bold">{{ result.msg }}</p>
+  {% if result.errors %}
+  <p class="mt-2 text-alert">{{ result.errors|length }} row{{ '' if result.errors|length == 1 else 's' }} could not be imported:</p>
+  <ul class="list-disc ml-5 text-alert">{% for e in result.errors %}<li>{{ e.message }}</li>{% endfor %}</ul>
+  {% endif %}
+  {% if result.week %}
+  <form method="post" action="/manager/schedule/generate" class="mt-4 flex flex-wrap gap-3">
+    <input type="hidden" name="week" value="{{ result.week }}"><input type="hidden" name="keep_manual" value="1">
+    <button class="btn-primary">Generate schedule for week of {{ result.week|nice_date }}</button>
+    <a class="btn-outline" href="/manager?week={{ result.week }}">View week</a>
+  </form>
+  {% endif %}
+</div>
+{% endif %}
+<form method="post" enctype="multipart/form-data" class="grid gap-8 md:grid-cols-[1fr_380px]">
+  <div class="space-y-4">
+    <label class="field"><span>Paste rows from Excel or Google Sheets (header row included)</span>
+      <textarea name="data" rows="10" placeholder="Group	Date	Start	End&#10;Castle tour	2026-10-19	10:00	12:00"></textarea></label>
+    <button class="btn-primary">Import groups</button>
+  </div>
+  <div class="space-y-4">
+    <label class="field"><span>Or upload a file (.xlsx or .csv)</span><input type="file" name="file" accept=".xlsx,.csv,.txt" class="!h-auto py-2"></label>
+    <div class="text-[13px] text-muted max-w-[40ch] space-y-2">
+      <p>The first row names the columns. We recognise <strong>Group</strong> (or Name), <strong>Date</strong>, <strong>Start</strong>, and <strong>End</strong> or <strong>Duration</strong>; <strong>People</strong> is optional.</p>
+      <p>Dates can be 2026-10-20, 20.10.2026 or 20/10/2026. Times like 9:00 or 14:30.</p>
+      <p>Rows already in the schedule are skipped, so importing the same sheet twice is safe.</p>
+    </div>
+  </div>
+</form>
+{% endblock %}

@@ -1,0 +1,10 @@
+{% macro week_nav(w, base) %}
+<div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+  <h1>{{ w.title }}</h1>
+  <div class="flex gap-2">
+    <a class="btn-outline btn-sm" href="{{ base }}?week={{ w.prev }}">‹ Previous</a>
+    <a class="btn-outline btn-sm" href="{{ base }}">This week</a>
+    <a class="btn-outline btn-sm" href="{{ base }}?week={{ w.next }}">Next ›</a>
+  </div>
+</div>
+{% endmacro %}

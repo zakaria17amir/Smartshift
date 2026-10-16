@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% from "_week_grid.html" import week_grid %}
+{% block title %}Week – SmartShift{% endblock %}
+{% block content %}
+<div class="flex flex-wrap items-center justify-between gap-3 mb-2">
+  <h1>{{ w.title }}</h1>
+  <div class="flex flex-wrap gap-2">
+    <a class="btn-outline btn-sm" href="/manager?week={{ w.prev }}">‹ Previous</a>
+    <a class="btn-outline btn-sm" href="/manager">This week</a>
+    <a class="btn-outline btn-sm" href="/manager?week={{ w.next }}">Next ›</a>
+    <a class="btn-outline" href="/manager/import">Import groups</a>
+    <a class="btn-outline" href="/manager/groups/new">Add a group</a>
+    <form method="post" action="/manager/schedule/generate" class="flex items-center gap-3">
+      <input type="hidden" name="week" value="{{ w.monday }}">
+      <input type="hidden" name="keep_manual" value="1">
+      <button class="btn-primary">Generate schedule</button>
+    </form>
+  </div>
+</div>
+<p class="mb-4 {% if n_un %}text-alert{% else %}text-muted{% endif %}">
+  {% if n_groups == 0 %}No groups this week yet. Import a spreadsheet or add a group.
+  {% elif n_un %}{{ n_un }} group{{ '' if n_un == 1 else 's' }} {{ 'has' if n_un == 1 else 'have' }} no host yet. <a href="/manager/schedule?week={{ w.monday }}">Open Schedule</a> to assign {{ 'it' if n_un == 1 else 'them' }} by hand.
+  {% else %}Every group has a host.{% endif %}
+</p>
+{{ week_grid(grid) }}
+<p class="text-[13px] text-muted mt-3">Each colour is one host. Hatched red blocks have no host. Click a block to open it in Schedule.</p>
+{% endblock %}

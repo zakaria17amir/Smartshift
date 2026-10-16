@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% from "_week_nav.html" import week_nav %}
+{% block title %}Availability – SmartShift{% endblock %}
+{% block content %}
+{{ week_nav(w, "/manager/availability") }}
+<p class="mb-4 text-muted">
+  {% if oncall %}{{ oncall|length }} on-call day{{ '' if oncall|length == 1 else 's' }} this week: {{ oncall|join(', ') }}.
+  {% else %}No one is on call this week.{% endif %}
+</p>
+<div class="overflow-x-auto -mx-6 px-6">
+<table class="table min-w-[900px]">
+  <thead><tr><th>Host</th>{% for d in w.days %}<th>{{ d|nice_date }}</th>{% endfor %}</tr></thead>
+  <tbody>
+  {% for h in hosts %}
+  <tr>
+    <td class="font-bold whitespace-nowrap"><span class="inline-block w-3 h-3 mr-2 align-middle bg-host-{{ h.id % 6 }} border border-ink/20"></span>{{ h.name }}</td>
+    {% for d in w.days %}
+    <td>
+      {% for s in table[h.id][d] %}
+        {% if s.on_call %}<span class="inline-block text-pine border border-dashed border-pine px-1 text-[13px]">On call</span>
+        {% else %}<span class="block whitespace-nowrap">{{ s.start_min|hhmm }}–{{ s.end_min|hhmm }}</span>{% endif %}
+      {% else %}<span class="text-rule">—</span>{% endfor %}
+    </td>
+    {% endfor %}
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}

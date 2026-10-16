@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block tabs %}{% endblock %}
+{% block content %}
+<div class="max-w-[480px]">
+  <h1 class="mb-3">You don't have access to this page.</h1>
+  <p class="text-muted mb-6">Switch user to continue.</p>
+  <form method="post" action="/switch"><button class="btn-primary">Switch user</button></form>
+</div>
+{% endblock %}

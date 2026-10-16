@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% from "_week_grid.html" import week_grid %}
+{% from "_week_nav.html" import week_nav %}
+{% block title %}Availability – SmartShift{% endblock %}
+{% block content %}
+{{ week_nav(w, "/me/availability") }}
+<p class="text-muted mb-4 max-w-[70ch]">Green bands are the times you can work. Dashed days are on-call days: you keep them free and accept last-minute groups. Your assigned groups appear on top.</p>
+{{ week_grid(grid) }}
+
+<div class="grid gap-8 md:grid-cols-[480px_1fr] mt-8">
+  <form method="post" action="/me/availability" class="space-y-4">
+    <h2>Add availability</h2>
+    <input type="hidden" name="week" value="{{ w.monday }}">
+    <label class="field"><span>Date</span><input type="date" name="date" value="{{ w.days[0] }}" required></label>
+    <div class="grid grid-cols-2 gap-4">
+      <label class="field"><span>From</span><input type="time" name="start" value="09:00" step="900" required></label>
+      <label class="field"><span>Until</span><input type="time" name="end" value="17:00" step="900" required></label>
+    </div>
+    <button class="btn-primary">Add availability</button>
+  </form>
+
+  <div>
+    <h2 class="mb-3">This week</h2>
+    <table class="table">
+      <thead><tr><th>Day</th><th>Available</th><th>On call</th></tr></thead>
+      <tbody>
+      {% for d, slots in by_day.items() %}
+      {% set oncall = slots | selectattr("on_call") | list %}
+      <tr>
+        <td class="whitespace-nowrap">{{ d|nice_date }}</td>
+        <td>
+          {% for s in slots if not s.on_call %}
+          <form method="post" action="/me/availability/{{ s.id }}" class="flex flex-wrap items-center gap-2 mb-2">
+            <input type="time" name="start" value="{{ s.start_min|hhmm }}" step="900" class="h-9 px-2 border border-rule rounded-md" aria-label="From">
+            <span>–</span>
+            <input type="time" name="end" value="{{ s.end_min|hhmm }}" step="900" class="h-9 px-2 border border-rule rounded-md" aria-label="Until">
+            <button class="btn-outline btn-sm">Save</button>
+            <button class="btn-danger btn-sm" formaction="/me/availability/{{ s.id }}/delete">Remove</button>
+          </form>
+          {% else %}<span class="text-muted text-[13px]">Not available</span>{% endfor %}
+        </td>
+        <td>
+          <form method="post" action="/me/on-call">
+            <input type="hidden" name="date" value="{{ d }}">
+            {% if oncall %}<input type="hidden" name="on" value="0"><button class="btn-outline btn-sm">On call ✓</button>
+            {% else %}<input type="hidden" name="on" value="1"><button class="btn-outline btn-sm text-muted">Mark on call</button>{% endif %}
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

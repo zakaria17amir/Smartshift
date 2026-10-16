@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% from "_week_nav.html" import week_nav %}
+{% block title %}Schedule – SmartShift{% endblock %}
+{% block content %}
+{{ week_nav(w, "/manager/schedule") }}
+<div class="flex flex-wrap gap-3 mb-6">
+  <form method="post" action="/manager/schedule/generate" class="flex flex-wrap items-center gap-3">
+    <input type="hidden" name="week" value="{{ w.monday }}">
+    <button class="btn-primary">Generate schedule</button>
+    <label class="flex items-center gap-2"><input type="checkbox" name="keep_manual" value="1" checked class="w-5 h-5 accent-pine"> Keep assignments I set by hand</label>
+  </form>
+  <a class="btn-outline" href="/manager/groups/new">Add a group</a>
+</div>
+{% if not by_day %}
+<p class="text-muted">No groups this week yet. <a href="/manager/import">Import a spreadsheet</a> or add a group.</p>
+{% endif %}
+{% for d, gs in by_day.items() %}
+<h2 class="mt-6 mb-2">{{ d|long_date }}</h2>
+<table class="table">
+  <thead><tr><th class="w-28">Time</th><th>Group</th><th class="w-64">Host</th><th>Why</th><th></th></tr></thead>
+  <tbody>
+  {% for g in gs %}
+  <tr id="g{{ g.id }}" class="{% if not g.user_id %}bg-alert/5{% endif %}">
+    <td class="whitespace-nowrap">{{ g.start_min|hhmm }}–{{ g.end_min|hhmm }}</td>
+    <td><span class="font-bold">{{ g.name }}</span>{% if g.size %}<span class="text-muted text-[13px]"> · {{ g.size }} people</span>{% endif %}</td>
+    <td>
+      <form method="post" action="/manager/schedule/{{ g.id }}" class="flex gap-2 items-center">
+        <select name="user_id" class="h-9 px-2 border border-rule rounded-md bg-white flex-1 {% if not g.user_id %}text-alert font-bold{% endif %}" aria-label="Host for {{ g.name }}">
+          <option value="" {% if not g.user_id %}selected{% endif %}>Unassigned</option>
+          {% for h in hosts %}<option value="{{ h.id }}" {% if g.user_id == h.id %}selected{% endif %}>{{ h.name }}</option>{% endfor %}
+        </select>
+        <button class="btn-outline btn-sm">Save</button>
+      </form>
+    </td>
+    <td class="text-[13px] {% if not g.user_id %}text-alert{% else %}text-muted{% endif %}">
+      {% if g.source == 'manual' %}<span class="inline-block px-1 border border-ink/30 text-ink mr-1">Set by hand</span>{% endif %}
+      {{ g.reason or ('Not scheduled yet' if not g.source else '') }}
+      {% for wmsg in warnings.get(g.id, []) %}<span class="block text-alert font-bold">{{ wmsg }}</span>{% endfor %}
+    </td>
+    <td><form method="post" action="/manager/groups/{{ g.id }}/delete" data-confirm="Remove {{ g.name }}? Logged hours are kept."><button class="btn-danger btn-sm">Remove</button></form></td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endfor %}
+{% endblock %}

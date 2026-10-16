@@ -108,4 +108,11 @@ def seed_demo(db: sqlite3.Connection, monday_iso: str):
         "insert into work_logs(user_id, date, hours, note) values (?, ?, ?, ?)",
         [(uid, day(d), h, note) for uid, d, h, note in _WORK_LOGS],
     )
+    from scheduler import Group, Slot, schedule  # local import: scheduler is pure, db stays import-light
+    groups = [Group(r["id"], r["date"], r["start_min"], r["end_min"], r["name"]) for r in db.execute("select * from groups")]
+    slots = [Slot(r["user_id"], r["date"], r["start_min"], r["end_min"], bool(r["on_call"])) for r in db.execute("select * from availability")]
+    db.executemany(
+        "insert into assignments(group_id, user_id, source, reason) values (?, ?, 'auto', ?)",
+        [(a.group_id, a.user_id, a.reason) for a in schedule(groups, slots).assignments],
+    )
     db.commit()

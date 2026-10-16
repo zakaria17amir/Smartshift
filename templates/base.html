@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}SmartShift{% endblock %}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='tailwind.css') }}">
+</head>
+<body>
+<header class="border-b border-rule bg-white">
+  <div class="max-w-[1180px] mx-auto px-6 h-16 flex items-center justify-between gap-4">
+    <a href="/" class="text-xl font-bold text-ink no-underline">SmartShift</a>
+    {% if current_user %}
+    <div class="flex items-center gap-3">
+      <span class="chip">{{ current_user.name }}, {{ current_user.role }}</span>
+      <form method="post" action="/switch"><button class="btn-outline btn-sm">Switch user</button></form>
+    </div>
+    {% endif %}
+  </div>
+</header>
+<main class="max-w-[1180px] mx-auto px-6 py-6">
+  {% block tabs %}
+  {% if current_user %}
+  <nav class="tabs">
+    {% if current_user.role == 'host' %}
+      <a href="/me" {% if active == 'week' %}aria-current="page"{% endif %}>My week</a>
+      <a href="/me/availability" {% if active == 'availability' %}aria-current="page"{% endif %}>Availability</a>
+      <a href="/me/history" {% if active == 'history' %}aria-current="page"{% endif %}>Work history</a>
+    {% else %}
+      <a href="/manager" {% if active == 'week' %}aria-current="page"{% endif %}>Week</a>
+      <a href="/manager/availability" {% if active == 'availability' %}aria-current="page"{% endif %}>Availability</a>
+      <a href="/manager/import" {% if active == 'import' %}aria-current="page"{% endif %}>Import</a>
+      <a href="/manager/schedule" {% if active == 'schedule' %}aria-current="page"{% endif %}>Schedule</a>
+      <a href="/manager/hours" {% if active == 'hours' %}aria-current="page"{% endif %}>Hours</a>
+    {% endif %}
+  </nav>
+  {% endif %}
+  {% endblock %}
+  {% include "_flash.html" %}
+  {% block content %}{% endblock %}
+</main>
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>

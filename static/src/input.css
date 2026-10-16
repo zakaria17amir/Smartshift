@@ -1,0 +1,58 @@
+@import "tailwindcss";
+@source "../../templates";
+@source inline("bg-host-{0,1,2,3,4,5}");
+
+@theme {
+  --color-paper: #F3F4F1;
+  --color-ink: #1B2A24;
+  --color-muted: #5E6B66;
+  --color-rule: #C9CFCB;
+  --color-pine: #0E6B55;
+  --color-alert: #B42318;
+  --color-host-0: #D6E6F7;
+  --color-host-1: #F8E1C2;
+  --color-host-2: #DDEFCF;
+  --color-host-3: #F5D9E8;
+  --color-host-4: #E6DEF7;
+  --color-host-5: #CFEFE8;
+  --font-sans: "Atkinson Hyperlegible", system-ui, "Segoe UI", sans-serif;
+}
+
+@layer base {
+  body { @apply bg-paper text-ink font-sans text-base leading-normal; }
+  h1 { @apply text-[25px] font-bold leading-tight; }
+  h2 { @apply text-xl font-bold leading-tight; }
+  a { @apply text-pine underline-offset-2; }
+  :focus-visible { @apply outline-2 outline-offset-2 outline-pine; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+}
+
+@layer components {
+  .btn, .btn-primary, .btn-outline, .btn-danger { @apply inline-flex items-center justify-center h-11 px-4 rounded-md font-bold text-base cursor-pointer whitespace-nowrap no-underline disabled:opacity-50; }
+  .btn-primary { @apply bg-pine text-white hover:bg-pine/90; }
+  .btn-outline { @apply border border-ink text-ink bg-transparent hover:bg-ink/5; }
+  .btn-danger { @apply border border-alert text-alert bg-transparent hover:bg-alert/5; }
+  .btn-sm { @apply h-9 px-3 text-[13px]; }
+  .field { @apply block; }
+  .field > span { @apply block text-[13px] text-muted mb-1; }
+  .field > input, .field > select, .field > textarea { @apply block w-full h-11 px-3 border border-rule rounded-md bg-white text-ink; }
+  .field > textarea { @apply h-auto py-2 font-mono text-[13px]; }
+  .tabs { @apply flex gap-6 border-b border-rule mb-6 overflow-x-auto; }
+  .tabs a { @apply block py-3 text-ink no-underline border-b-2 border-transparent -mb-px whitespace-nowrap; }
+  .tabs a[aria-current] { @apply border-pine font-bold; }
+  .flash-ok, .flash-error { @apply px-4 py-3 mb-6 border-l-4 bg-white; }
+  .flash-ok { @apply border-pine; }
+  .flash-error { @apply border-alert text-alert; }
+  .table { @apply w-full border-collapse; }
+  .table th, .table td { @apply border-b border-rule py-2 pr-4 text-left align-top; }
+  .table th { @apply text-[13px] text-muted font-normal; }
+  .chip { @apply inline-flex items-center h-8 px-3 rounded-full bg-pine text-white text-[13px]; }
+  .week-grid { display: grid; grid-template-columns: 56px repeat(7, minmax(120px, 1fr)); grid-auto-rows: 1.25rem; @apply border-t border-l border-rule bg-white; }
+  .grid-head { @apply text-[13px] font-bold border-r border-b border-rule px-1 flex items-end pb-1; }
+  .grid-hour { @apply text-[13px] text-muted border-r border-b border-rule pr-1 text-right; }
+  .grid-cell { @apply border-r border-b border-rule; }
+  .grid-band { @apply bg-pine/15; }
+  .grid-oncall { @apply border-2 border-dashed border-pine text-pine text-[13px] p-1; }
+  .grid-block { @apply text-[13px] leading-tight px-1 py-0.5 border-l-4 border-ink/20 overflow-hidden no-underline text-ink; }
+  .grid-unassigned { @apply border border-alert text-alert font-bold; background: repeating-linear-gradient(45deg, transparent 0 6px, color-mix(in srgb, var(--color-alert) 18%, transparent) 6px 12px); }
+}

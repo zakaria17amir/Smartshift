@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Add a group – SmartShift{% endblock %}
+{% block content %}
+<form method="post" class="max-w-[480px] space-y-4">
+  <h1>Add a group</h1>
+  <p class="text-muted">For last-minute bookings. Hosts who marked the day as on call are preferred.</p>
+  <label class="field"><span>Group</span><input name="name" placeholder="Birthday party" required value="{{ request.form.get('name', '') }}"></label>
+  <label class="field"><span>Date</span><input type="date" name="date" value="{{ request.form.get('date', today) }}" required></label>
+  <div class="grid grid-cols-2 gap-4">
+    <label class="field"><span>From</span><input type="time" name="start" value="{{ request.form.get('start', '10:00') }}" step="900" required></label>
+    <label class="field"><span>Until</span><input type="time" name="end" value="{{ request.form.get('end', '12:00') }}" step="900" required></label>
+  </div>
+  <label class="field"><span>People (optional)</span><input type="number" name="size" min="1" value="{{ request.form.get('size', '') }}"></label>
+  <label class="flex items-center gap-2"><input type="checkbox" name="assign_now" value="1" checked class="w-5 h-5 accent-pine"> Assign a host now (prefer hosts on call)</label>
+  <div class="flex gap-3"><button class="btn-primary">Add group</button><a class="btn-outline" href="/manager/schedule">Cancel</a></div>
+</form>
+{% endblock %}

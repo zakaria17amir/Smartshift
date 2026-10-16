@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% from "_week_grid.html" import week_grid %}
+{% from "_week_nav.html" import week_nav %}
+{% block title %}My week – SmartShift{% endblock %}
+{% block content %}
+{{ week_nav(w, "/me") }}
+{% if not by_day %}
+<p class="text-muted mb-4">You have no groups this week. Add availability so the manager can schedule you.</p>
+{% endif %}
+{{ week_grid(grid) }}
+{% if by_day %}
+<h2 class="mt-8 mb-3">Your groups</h2>
+<table class="table">
+  <thead><tr><th>Day</th><th>Time</th><th>Group</th><th>Hours</th><th></th></tr></thead>
+  <tbody>
+  {% for d, gs in by_day.items() %}{% for g in gs %}
+  <tr>
+    <td>{% if loop.first %}{{ d|nice_date }}{% endif %}</td>
+    <td>{{ g.start_min|hhmm }}–{{ g.end_min|hhmm }}</td>
+    <td class="font-bold">{{ g.name }}</td>
+    <td>{{ hours(g.start_min, g.end_min)|round(1) }} h</td>
+    <td>
+      {% if g.id in logged %}<span class="text-muted text-[13px]">Hours logged</span>
+      {% elif g.date <= today %}
+      <form method="post" action="/me/hours" class="flex gap-2 items-center">
+        <input type="hidden" name="date" value="{{ g.date }}"><input type="hidden" name="group_id" value="{{ g.id }}"><input type="hidden" name="note" value="{{ g.name }}">
+        <input name="hours" value="{{ hours(g.start_min, g.end_min)|round(2) }}" class="h-9 w-20 px-2 border border-rule rounded-md" aria-label="Hours worked">
+        <button class="btn-primary btn-sm">Log hours</button>
+      </form>
+      {% else %}<span class="text-muted text-[13px]">Upcoming</span>{% endif %}
+    </td>
+  </tr>
+  {% endfor %}{% endfor %}
+  </tbody>
+</table>
+{% endif %}
+{% endblock %}

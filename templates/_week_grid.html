@@ -1,0 +1,30 @@
+{% macro week_grid(g) %}
+<div class="overflow-x-auto -mx-6 px-6">
+<div class="week-grid min-w-[900px]">
+  <div class="grid-head" style="grid-column:1;grid-row:1"></div>
+  {% for d in g.days %}
+  <div class="grid-head" style="grid-column:{{ loop.index + 1 }};grid-row:1">{{ d|nice_date }}</div>
+  {% endfor %}
+  {% for r, label in g.rows %}
+  <div class="grid-hour" style="grid-column:1;grid-row:{{ r }}">{{ label }}</div>
+  {% for d in g.days %}<div class="grid-cell" style="grid-column:{{ loop.index + 1 }};grid-row:{{ r }}"></div>{% endfor %}
+  {% endfor %}
+  {% for it in g["items"] %}
+    {% set pos = "grid-column:" ~ it.col ~ ";grid-row:" ~ it.r0 ~ " / " ~ it.r1 ~ ";" %}
+    {% if it.kind == 'band' %}
+      <div class="grid-band z-0 pointer-events-none" style="{{ pos }}"></div>
+    {% elif it.kind == 'oncall' %}
+      <div class="grid-oncall z-0" style="{{ pos }}">On call</div>
+    {% else %}
+      {% set lane = "width:50%;margin-left:" ~ (50 if it.lane == 1 else 0) ~ "%;" if it.lanes == 2 else "" %}
+      {% if it.href %}<a href="{{ it.href }}"{% else %}<div{% endif %}
+         class="grid-block z-10 {% if it.kind == 'unassigned' %}grid-unassigned{% else %}bg-host-{{ it.colour }}{% endif %}"
+         style="{{ pos }}{{ lane }}" title="{{ it.label }} {{ it.start|hhmm }}–{{ it.end|hhmm }} {{ it.sublabel }}">
+        <span class="font-bold block truncate">{{ it.label }}</span>
+        <span class="block truncate">{{ it.start|hhmm }}–{{ it.end|hhmm }}{% if it.sublabel %} · {{ it.sublabel }}{% endif %}</span>
+      {% if it.href %}</a>{% else %}</div>{% endif %}
+    {% endif %}
+  {% endfor %}
+</div>
+</div>
+{% endmacro %}

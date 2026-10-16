@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block tabs %}{% endblock %}
+{% block content %}
+<div class="max-w-[480px]">
+  <h1 class="mb-2">Who's using SmartShift?</h1>
+  <p class="text-muted mb-6">Pick your name to continue. Hosts see only their own schedule and hours.</p>
+  <ul class="space-y-3">
+  {% for u in users %}
+    <li>
+      <form method="post" action="/switch/{{ u.id }}">
+        <button class="w-full text-left h-14 px-4 border border-rule bg-white rounded-md flex items-center justify-between hover:border-pine">
+          <span class="font-bold">{{ u.name }}</span>
+          <span class="text-[13px] text-muted">{{ 'Manager' if u.role == 'manager' else 'Host' }}</span>
+        </button>
+      </form>
+    </li>
+  {% endfor %}
+  </ul>
+</div>
+{% endblock %}
