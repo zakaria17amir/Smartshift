@@ -1,6 +1,6 @@
 from datetime import date
 
-from flask import Blueprint, abort, flash, jsonify, redirect, render_template, request, url_for
+from flask import Blueprint, abort, flash, jsonify, redirect, render_template, request, send_from_directory, url_for
 
 from auth import require_role
 from db import get_db
@@ -94,6 +94,15 @@ def import_page():
             msg += f" {skipped} {'was' if skipped == 1 else 'were'} already in the schedule and {'was' if skipped == 1 else 'were'} skipped."
         result = {"msg": msg, "errors": errs, "week": week_monday(first_week) if first_week else None}
     return render_template("manager/import.html", active="import", result=result)
+
+
+@bp.get("/import/example.<ext>")
+@bp.get("/import/example_<suffix>.<ext>")
+@require_role("manager")
+def example_file(ext: str, suffix: str = ""):
+    if ext not in ("xlsx", "csv") or suffix not in ("", "next_week"):
+        abort(404)
+    return send_from_directory("examples", f"groups_example{'_' + suffix if suffix else ''}.{ext}", as_attachment=True)
 
 
 def run_schedule(monday: str, keep_manual: bool):

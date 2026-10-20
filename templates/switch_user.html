@@ -1,20 +1,21 @@
 {% extends "base.html" %}
+{% block title %}Sign in – SmartShift{% endblock %}
 {% block tabs %}{% endblock %}
 {% block content %}
-<div class="max-w-[480px]">
-  <h1 class="mb-2">Who's using SmartShift?</h1>
-  <p class="text-muted mb-6">Pick your name to continue. Hosts see only their own schedule and hours.</p>
-  <ul class="space-y-3">
-  {% for u in users %}
-    <li>
-      <form method="post" action="/switch/{{ u.id }}">
-        <button class="w-full text-left h-14 px-4 border border-rule bg-white rounded-md flex items-center justify-between hover:border-pine">
-          <span class="font-bold">{{ u.name }}</span>
-          <span class="text-[13px] text-muted">{{ 'Manager' if u.role == 'manager' else 'Host' }}</span>
-        </button>
-      </form>
-    </li>
-  {% endfor %}
-  </ul>
+<div class="max-w-[420px] mx-auto mt-10 bg-white border border-rule rounded-md p-8">
+  <h1 class="mb-2">Sign in</h1>
+  <p class="text-muted mb-6">Hosts see only their own schedule and hours. The manager sees everyone.</p>
+  <form method="post" action="/login" class="space-y-4">
+    <label class="field"><span>Your name</span>
+      <select name="user_id" required autofocus>
+        {% for u in users %}
+        <option value="{{ u.id }}" {% if u.id == selected %}selected{% endif %}>{{ u.name }} – {{ 'Manager' if u.role == 'manager' else 'Host' }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label class="field"><span>Password</span><input type="password" name="password" required autocomplete="current-password"></label>
+    <button class="btn-primary w-full">Sign in</button>
+    <p class="text-[13px] text-muted">Demo accounts all use the password <code class="font-mono">{{ demo_password }}</code>.</p>
+  </form>
 </div>
 {% endblock %}

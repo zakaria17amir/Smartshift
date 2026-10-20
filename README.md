@@ -33,6 +33,8 @@ npm run build:css
 
 ## Demo script (section 8 of the brief)
 
+Sign-in window: pick a name, password `1234` for every demo account (simulated auth, as the brief allows).
+
 1. Sign in as **Anna Szabó** → Availability: add Monday 18:00–20:00, mark Friday on call, remove a slot. Work history: log hours. Sign in as **Bence**: Anna's data is not visible; `/manager` gives 403.
 2. Sign in as **Dóra Kiss** (manager) → Import: paste rows from Excel (header `Group Date Start End`). Import the same rows again: they are skipped.
 3. Week → **Generate schedule**. Schedule tab shows who got what and why; Monday 09:00/10:00/12:30 go to one host (four-hour rule), Monday 17:00 and Thursday 20:30 are unassigned (nobody available). Override a row — rule breaks are warned, not blocked. Regenerate: hand-set rows stay.

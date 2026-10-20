@@ -1,5 +1,7 @@
-*.sqlite
 __pycache__/
-.pytest_cache/
-.superpowers/
+*.pyc
+*.pyo
+*.pyd
+smartshift.sqlite
 node_modules/
+examples/

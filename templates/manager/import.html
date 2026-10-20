@@ -29,6 +29,7 @@
     <div class="text-[13px] text-muted max-w-[40ch] space-y-2">
       <p>The first row names the columns. We recognise <strong>Group</strong> (or Name), <strong>Date</strong>, <strong>Start</strong>, and <strong>End</strong> or <strong>Duration</strong>; <strong>People</strong> is optional.</p>
       <p>Dates can be 2026-10-20, 20.10.2026 or 20/10/2026. Times like 9:00 or 14:30.</p>
+      <p>Need a template? Download an example for <a href="{{ url_for('manager.example_file', ext='xlsx') }}">this week (.xlsx)</a> or <a href="{{ url_for('manager.example_file', suffix='next_week', ext='xlsx') }}">next week (.xlsx)</a>. Also as <a href="{{ url_for('manager.example_file', ext='csv') }}">.csv</a> / <a href="{{ url_for('manager.example_file', suffix='next_week', ext='csv') }}">.csv</a>.</p>
       <p>Rows already in the schedule are skipped, so importing the same sheet twice is safe.</p>
     </div>
   </div>
