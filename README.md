@@ -1,6 +1,7 @@
 # SmartShift
 
 Host scheduling for a small activity venue: hosts enter availability and log hours, the manager imports bookings from Excel, generates a fair schedule, and overrides it when needed.
+n**License:** MIT — free to use, modify, and distribute. See [LICENSE](LICENSE).
 
 ## Run locally
 
