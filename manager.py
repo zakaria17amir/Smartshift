@@ -171,6 +171,60 @@ def override(group_id: int):
     return redirect(url_for("manager.schedule_page", week=week_monday(g["date"])) + f"#g{group_id}")
 
 
+@bp.get("/users")
+@require_role("manager")
+def users_page():
+    users = get_db().execute("select * from users order by role = 'manager' desc, name").fetchall()
+    return render_template("manager/users.html", active="users", users=users)
+
+
+@bp.post("/users")
+@require_role("manager")
+def add_user():
+    name = request.form.get("name", "").strip()
+    role = request.form.get("role", "host")
+    if not name:
+        flash("Name is required.", "error")
+        return redirect(url_for("manager.users_page"))
+    if role not in ("manager", "host"):
+        role = "host"
+    db = get_db()
+    db.execute("insert into users(name, role) values (?, ?)", (name, role))
+    db.commit()
+    flash(f"Added {name} as {role}.", "ok")
+    return redirect(url_for("manager.users_page"))
+
+
+@bp.post("/users/<int:user_id>/role")
+@require_role("manager")
+def change_role(user_id: int):
+    user = get_db().execute("select * from users where id = ?", (user_id,)).fetchone()
+    if user is None:
+        abort(404)
+    new_role = request.form.get("role", "host")
+    if new_role not in ("manager", "host"):
+        flash("Invalid role.", "error")
+        return redirect(url_for("manager.users_page"))
+    db = get_db()
+    db.execute("update users set role = ? where id = ?", (new_role, user_id))
+    db.commit()
+    flash(f"{user['name']} is now {new_role}.", "ok")
+    return redirect(url_for("manager.users_page"))
+
+
+@bp.post("/users/<int:user_id>/delete")
+@require_role("manager")
+def delete_user(user_id: int):
+    user = get_db().execute("select * from users where id = ?", (user_id,)).fetchone()
+    if user is None:
+        abort(404)
+    db = get_db()
+    db.execute("delete from users where id = ?", (user_id,))
+    db.commit()
+    flash(f"Removed {user['name']}.", "ok")
+    return redirect(url_for("manager.users_page"))
+
+
 @bp.get("/hours")
 @require_role("manager")
 def hours_page():
