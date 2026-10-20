@@ -2,7 +2,7 @@
 
 Host scheduling for a small activity venue: hosts enter availability and log hours, the manager imports bookings from Excel, generates a fair schedule, and overrides it when needed.
 
-## Run
+## Run locally
 
 ```
 pip install -r requirements.txt
@@ -17,6 +17,36 @@ CSS is Tailwind v4, precompiled into `static/tailwind.css`. Only rebuild after e
 npm install
 npm run build:css
 ```
+
+## Host online (fork first)
+
+Before hosting, **fork this repo** to your own GitHub account so you own your copy:
+
+1. Go to https://github.com/zakaria17amir/Smartshift
+2. Click "Fork" in the top-right
+3. Then use your fork URL (`https://github.com/YOUR-USERNAME/Smartshift`) in the steps below
+
+### Glitch (easiest)
+
+1. Go to https://glitch.com and sign in
+2. Click "New project" → "Import from GitHub"
+3. Enter your fork URL: `https://github.com/YOUR-USERNAME/Smartshift`
+4. Glitch builds and runs it automatically at `https://your-project-name.glitch.me`
+5. First run seeds the demo DB (1 manager, 5 hosts, 12 groups)
+
+### Replit
+
+1. Go to https://replit.com and sign in
+2. Click "Create Repl" → "Import from GitHub"
+3. Enter your fork URL: `https://github.com/YOUR-USERNAME/Smartshift`
+4. Click "Run" in the top-right
+5. Replit gives you a web URL
+
+### Notes
+
+- Both platforms run the Flask dev server. For real traffic, change `app.run(debug=True)` to `app.run()` in `app.py` and use Gunicorn.
+- SQLite works on both platforms, but they wipe the DB on container restart. For persistence, use PostgreSQL (change `db.py` to use `psycopg2` or Supabase).
+- The password is still `1234` for all demo accounts. Change `DEMO_PASSWORD` in `auth.py` before exposing publicly.
 
 ## Files
 
@@ -41,29 +71,3 @@ Sign-in window: pick a name, password `1234` for every demo account (simulated a
 4. Hours tab: everyone's logged hours and this week's workload/load. Add a group on Saturday with "Assign now": the on-call host is preferred. `POST /api/bookings` does the same from an external site:
    `curl -X POST http://127.0.0.1:5000/api/bookings -H "Content-Type: application/json" -d "{\"name\":\"Walk-in\",\"date\":\"2026-10-24\",\"start\":\"11:00\",\"end\":\"12:30\"}"`
 5. Users tab: add a new host, change someone to manager, remove a user (their hours/assignments stay in the system).
-
-## Host online for free
-
-SmartShift is a Flask app with SQLite. For production, swap `smartshift.sqlite` for PostgreSQL and use a WSGI server like Gunicorn.
-
-### Glitch (easiest)
-
-1. Go to https://glitch.com and sign in
-2. Click "New project" → "Import from GitHub"
-3. Enter `https://github.com/zakaria17amir/Smartshift`
-4. Glitch builds and runs it automatically at `https://your-project-name.glitch.me`
-5. First run seeds the demo DB (1 manager, 5 hosts, 12 groups)
-
-### Replit
-
-1. Go to https://replit.com and sign in
-2. Click "Create Repl" → "Import from GitHub"
-3. Enter `https://github.com/zakaria17amir/Smartshift`
-4. Click "Run" in the top-right
-5. Replit gives you a web URL
-
-### Notes
-
-- Both platforms run the Flask dev server. For real traffic, change `app.run(debug=True)` to `app.run()` in `app.py` and use Gunicorn.
-- SQLite works on both platforms, but they wipe the DB on container restart. For persistence, use PostgreSQL (change `db.py` to use `psycopg2` or Supabase).
-- The password is still `1234` for all demo accounts. Change `DEMO_PASSWORD` in `auth.py` before exposing publicly.
